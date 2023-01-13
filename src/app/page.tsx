@@ -1,14 +1,14 @@
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from './page.module.css'
+import Image from 'next/image';
+import { Inter } from '@next/font/google';
+import styles from './page.module.css';
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        <p className='text-4xl text-amber-400'>
+        <p>
           Get started by editing&nbsp;
           <code className={styles.code}>app/page.tsx</code>
         </p>
@@ -87,5 +87,5 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
+  );
 }
