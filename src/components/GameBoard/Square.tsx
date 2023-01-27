@@ -1,30 +1,25 @@
-'use client';
+'use client'
 
-import { useSquare } from '@/hooks/useSquare';
-import { SquareColor } from '@/types';
-import { getSquareColor } from '@/utils/colors';
+import { GameSquare } from '@/dtos/square'
+import { getSquareColor } from '@/utils/colors'
 
 interface SquareProps {
-  color: SquareColor;
-  star?: boolean;
-  center?: boolean;
+  square: GameSquare
+  handleReveal: (square: GameSquare) => void
 }
 
-export default function Square({
-  color,
-  star = false,
-  center = false
-}: SquareProps) {
-  const { handleDiscover, selected } = useSquare();
-
-  console.log(selected);
+export default function Square({ square, handleReveal }: SquareProps) {
+  const { center, color, star, reveal, border } = square
 
   return (
     <div
       className={`relative aspect-square rounded-md cursor-pointer ${getSquareColor(
         color
-      )} ${center ? 'border-4 border-indigo-100' : ''}`}
-      onClick={handleDiscover}
+      )} ${center ? 'border-4 border-indigo-100' : ''}
+      ${border ? 'border-4 border-indigo-600 shadow-xl animate-pulse' : ''}`}
+      onClick={() => {
+        handleReveal(square)
+      }}
     >
       {star && (
         <img
@@ -33,7 +28,7 @@ export default function Square({
           alt="star"
         />
       )}
-      {selected && (
+      {reveal && (
         <img
           src="icons/cross-square.svg"
           className="absolute w-full h-full"
@@ -41,5 +36,5 @@ export default function Square({
         />
       )}
     </div>
-  );
+  )
 }
