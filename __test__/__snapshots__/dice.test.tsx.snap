@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dice renders dice unchanged 1`] = `
+<div>
+  <div
+    class="border-2 rounded-full w-20 h-20 flex justify-center items-center cursor-pointer bg-green-400"
+  >
+    <span
+      class="text-3xl font-bold text-white flex justify-center items-center bg-green-400"
+    >
+      1
+    </span>
+  </div>
+</div>
+`;
