@@ -7,9 +7,12 @@ export function highlightGameBoard(
   gameBoard: Array<GameSquare>,
   diceNumber: number,
   diceColor: SquareColor,
-  firstTurn: boolean
-) {
-  // console.log(groups)
+  firstTurn: boolean,
+  restMovements: number
+): Array<GameSquare> {
+  if (restMovements === 0) {
+    return gameBoard.map((square) => ({ ...square, border: false }))
+  }
   const group = getCurrentGroups({
     diceNumber,
     firstTurn,
@@ -18,7 +21,9 @@ export function highlightGameBoard(
     square
   })
 
-  return group.length ? highlight(gameBoard, group) : []
+  return group.length
+    ? highlight(gameBoard, group)
+    : gameBoard.map((square) => ({ ...square, border: false }))
 }
 
 /**
@@ -51,7 +56,6 @@ export function getCurrentGroups({
     return []
   }
 
-  // All squares are not in center
   if (firstTurn) {
     const ids = checkFirstTurn(actualGroup, groups, diceNumber)
     const centerElements = gameBoard.filter(
@@ -59,14 +63,19 @@ export function getCurrentGroups({
     )
     return centerElements.map(({ id }) => id)
   }
+  console.log(square)
 
   return square
-    ? checkSquareIsPossible(diceNumber, groups, square)
+    ? checkSquareIsPossible(diceNumber, groups, square, gameBoard)
     : checkGroupIsSmallerThanDice(
         actualGroup.map(({ id }) => id),
         diceNumber
       )
-    ? actualGroup.map(({ id }) => id)
+    ? checkIsNear(
+        gameBoard,
+        actualGroup.map(({ id }) => id),
+        null
+      )
     : []
 }
 
@@ -78,17 +87,38 @@ export function getCurrentGroups({
 function checkSquareIsPossible(
   diceNumber: number,
   currentGroups: Array<Array<number>>,
-  square: GameSquare
+  square: GameSquare,
+  gameBoard: Array<GameSquare>
 ) {
   if (square.reveal || !square.border) {
     return []
   }
   const groupOfActualSquare = extractSquareGroup(currentGroups, square)
-  if (!checkGroupIsSmallerThanDice(groupOfActualSquare, diceNumber)) {
-    return []
-  } else {
-    return groupOfActualSquare
-  }
+  const nearSquares = checkIsNear(gameBoard, groupOfActualSquare, square)
+  return !checkGroupIsSmallerThanDice(groupOfActualSquare, diceNumber)
+    ? []
+    : nearSquares
+}
+
+function checkIsNear(
+  gameBoard: Array<GameSquare>,
+  actualGroup: Array<number>,
+  square: GameSquare | null
+) {
+  const revealedSquares = gameBoard
+    .filter((square) => square.reveal)
+    .map((square) => [
+      square.bottom?.id,
+      square.top?.id,
+      square.right?.id,
+      square.left?.id
+    ])
+    .flat()
+
+  const nearSquares = actualGroup.filter(
+    (id) => revealedSquares.includes(id) && square?.id !== id
+  )
+  return nearSquares
 }
 
 /**

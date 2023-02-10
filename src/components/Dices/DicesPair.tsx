@@ -1,30 +1,32 @@
-import { SquareColor } from '@/types'
+'use client'
+
+import { DiceData } from '@/hooks/usePairDices'
 import { getSquareColor } from '@/utils/colors'
-import { randomIntFromInterval } from '@/utils/random'
 import Dice from './Dice'
 
 interface DiceContainerProps {
   activeDice: boolean
-  diceNumber: number
-  diceColor: SquareColor
+  dice: DiceData
+  handleSelectedDice: (dice: DiceData) => void
 }
 
-export function DiceContainer({
+export function DicePair({
   activeDice,
-  diceColor,
-  diceNumber
+  dice,
+  handleSelectedDice
 }: DiceContainerProps) {
-  const number1 = randomIntFromInterval(Math.random(), 1, 5)
-  const number2 = randomIntFromInterval(Math.random(), 1, 5)
-
+  const { diceColor, diceNumber } = dice
   return (
-    <>
+    <div
+      className="flex justify-center gap-2 hover:bg-green-400"
+      onClick={() => handleSelectedDice(dice)}
+    >
       <Dice active={activeDice}>{diceNumber}</Dice>
       <Dice active={activeDice}>
         <div
           className={`w-8 h-8 rounded-full ${getSquareColor(diceColor)}`}
         ></div>
       </Dice>
-    </>
+    </div>
   )
 }

@@ -17,9 +17,7 @@ export default function Square({ square, handleReveal }: SquareProps) {
         color
       )} ${center ? 'border-4 border-indigo-100' : ''}
       ${border ? 'border-4 border-indigo-600 shadow-xl animate-pulse' : ''}`}
-      onClick={() => {
-        handleReveal(square)
-      }}
+      onClick={() => handleReveal(square)}
     >
       {star && (
         <img

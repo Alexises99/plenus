@@ -1,71 +1,63 @@
 import { GameSquare } from '@/dtos/square'
 import { SquareColor } from '@/types'
-import { checkDice, generateRandomNumbers } from '@/utils/dice'
+import { checkDice } from '@/utils/dice'
 import { highlightGameBoard } from '@/utils/gameLogic'
-import { getRandomNumber, randomIntFromInterval } from '@/utils/random'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useDice } from './useDice'
+import { useEffect, useRef, useState } from 'react'
+import { DiceData } from './usePairDices'
 
 interface useActionParams {
   initialGameBoard: GameSquare[]
   gameBoardGroup: Record<SquareColor, Array<Array<number>>>
+  dice: DiceData | null
+  restMovements: number
+  handleRestMovements: (restMovements: number) => void
 }
 
 let lastSquareVisited: GameSquare | null = null
-const rand = getRandomNumber()
 
 export function useAction({
   initialGameBoard,
-  gameBoardGroup
+  gameBoardGroup,
+  dice,
+  restMovements,
+  handleRestMovements
 }: useActionParams) {
   const [gameBoard, setGameBoard] = useState<GameSquare[]>(initialGameBoard)
-
-  const generateRandom = useCallback(
-    () => randomIntFromInterval(rand(), 1, 5),
-    []
-  )
-  const { diceValue: diceNumber, handleDice: handleDiceNumber } =
-    useDice<number>(() => generateRandomNumbers(generateRandom).diceNumber)
-  const { diceValue: diceColor, handleDice: handleDiceColor } =
-    useDice<SquareColor>(() => generateRandomNumbers(generateRandom).diceColor)
-  const [restMovements, setRestMovements] = useState<number>(diceNumber)
   const firstTurn = useRef<boolean>(true)
 
   useEffect(() => {
-    rollDice()
-  }, [])
+    dice && checkGame(dice)
+  }, [dice])
 
-  const rollDiceGame = () => {
+  const checkGame = (dice: DiceData) => {
     if (!checkDice(restMovements)) {
       return
     }
-    rollDice()
+    highLightGame(dice)
   }
 
-  const rollDice = () => {
-    const { diceColor, diceNumber } = generateRandomNumbers(generateRandom)
-
-    setRestMovements(diceNumber)
-    handleDiceNumber(diceNumber)
-    handleDiceColor(diceColor)
-
+  const highLightGame = ({ diceColor, diceNumber }: DiceData) => {
     const highlightedGameBoard = highlightGameBoard(
-      lastSquareVisited,
+      null,
       gameBoardGroup,
       gameBoard,
       diceNumber,
       diceColor,
-      firstTurn.current
+      firstTurn.current,
+      diceNumber
     )
     lastSquareVisited = null
-    !highlightedGameBoard.length
-      ? rollDice()
-      : setGameBoard(highlightedGameBoard)
+
+    if (!highlightedGameBoard.some((square) => square.border)) {
+      handleRestMovements(0)
+    }
+    setGameBoard(highlightedGameBoard)
   }
 
   const handleSquareReveal = (square: GameSquare) => {
     if (!square.border || restMovements < 1) return
-    setRestMovements((prevState) => prevState - 1)
+    const prevRestMovements = restMovements
+    handleRestMovements(prevRestMovements - 1)
     firstTurn.current = false
     lastSquareVisited = square
 
@@ -73,19 +65,26 @@ export function useAction({
       ...squareItem,
       reveal: squareItem.reveal ? true : squareItem.id === square.id
     }))
-
-    setGameBoard(copyGameBoard)
+    if (dice) {
+      const { diceColor, diceNumber } = dice
+      const highlightedGameBoard = highlightGameBoard(
+        square,
+        gameBoardGroup,
+        copyGameBoard,
+        diceNumber,
+        diceColor,
+        firstTurn.current,
+        prevRestMovements - 1
+      )
+      setGameBoard(highlightedGameBoard)
+      if (!highlightedGameBoard.some((square) => square.border)) {
+        handleRestMovements(0)
+      }
+    }
   }
 
-  const activeDice = !restMovements
-
   return {
-    diceNumber,
-    diceColor,
-    rollDice: rollDiceGame,
     handleSquareReveal,
-    activeDice,
-    restMovements,
     gameBoard
   }
 }

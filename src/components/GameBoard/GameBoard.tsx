@@ -1,13 +1,47 @@
-import { GameSquare, Square, Square as SquareType } from '@/dtos/square'
-import { prepareGameBoard, prepareGroups } from '@/utils/group'
-import gameBoard from '../../../game-board.json'
+'use client'
+
+import { GameSquare } from '@/dtos/square'
+import { useDices } from '@/hooks/useDices'
+import { SquareColor } from '@/types'
+import DicesContainer from '../Dices/DicesContainer'
 import GameBoardPlay from './GameBoardPlay'
 
-export function GameBoard() {
-  const finalGameBoard = prepareGameBoard(gameBoard as SquareType[][]).flat()
-  const gameBoardGroup = prepareGroups(finalGameBoard)
+interface GameBoardPlayProps {
+  gameBoard: GameSquare[]
+  gameBoardGroup: Record<SquareColor, Array<Array<number>>>
+}
+
+export default function GameBoard({
+  gameBoard,
+  gameBoardGroup
+}: GameBoardPlayProps) {
+  const {
+    dices,
+    handleRestMovements,
+    handleSelectedDice,
+    restMovements,
+    selectedDice,
+    activeDice,
+    rollDices
+  } = useDices()
 
   return (
-    <GameBoardPlay gameBoard={finalGameBoard} gameBoardGroup={gameBoardGroup} />
+    <>
+      <DicesContainer
+        activeDice={activeDice}
+        dices={dices}
+        handleSelectedDice={handleSelectedDice}
+        restMovements={restMovements}
+        rollDices={rollDices}
+      />
+
+      <GameBoardPlay
+        dice={selectedDice}
+        gameBoardGroup={gameBoardGroup}
+        initialGameBoard={gameBoard}
+        handleRestMovements={handleRestMovements}
+        restMovements={restMovements}
+      />
+    </>
   )
 }
