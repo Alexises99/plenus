@@ -57,4 +57,4 @@ jobs:
           name: dist
           path: .next
       - name: Unit tests
-        run: npm run test
+        run: npm run test:ci
