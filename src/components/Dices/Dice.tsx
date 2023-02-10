@@ -2,10 +2,10 @@ import { ReactNode } from 'react'
 
 interface DiceProps {
   children: ReactNode
-  active: boolean
+  active?: boolean
 }
 
-export default function Dice({ active, children }: DiceProps) {
+export default function Dice({ active = false, children }: DiceProps) {
   if (active) {
     return (
       <div className="border-2 rounded-full w-20 h-20 flex justify-center items-center cursor-pointer bg-green-400">

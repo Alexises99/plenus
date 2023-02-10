@@ -4,9 +4,12 @@ import { randomIntFromInterval } from '@/utils/random'
 import { useCallback } from 'react'
 import { useDice } from './useDice'
 
-export interface DiceData {
+export interface DiceBasic {
   diceNumber: number
   diceColor: SquareColor
+}
+
+export interface DiceData extends DiceBasic {
   handleDiceNumber: (value: number) => void
   handleDiceColor: (value: SquareColor) => void
   rollDice: () => void

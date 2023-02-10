@@ -22,4 +22,16 @@ describe('Dice', () => {
     const { container } = render(<Dice active children={testNumber} />)
     expect(container).toMatchSnapshot()
   })
+
+  it('active dice renders background color', () => {
+    const { container } = render(<Dice active children={testNumber} />)
+
+    expect(container.getElementsByClassName('bg-green-400')).toHaveLength(2)
+  })
+
+  it('not active dice not renders background color', () => {
+    const { container } = render(<Dice children={testNumber} />)
+
+    expect(container.getElementsByClassName('bg-green-400')).toHaveLength(0)
+  })
 })

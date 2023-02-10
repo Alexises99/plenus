@@ -32,7 +32,9 @@ function DicesContainer({
 
         <span className="text-white text-lg">
           Movimientos restantes:{' '}
-          <span className="font-semibold">{restMovements}</span>
+          <span className="font-semibold" role="status">
+            {restMovements}
+          </span>
         </span>
         <button
           className={`w-full ${
