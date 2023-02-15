@@ -11,6 +11,7 @@ describe('Dices Container', () => {
     render(
       <DicesContainer
         activeDice
+        selectedDice={-1}
         dices={[dice]}
         handleSelectedDice={jest.fn()}
         restMovements={0}
@@ -34,6 +35,7 @@ describe('Dices Container', () => {
     render(
       <DicesContainer
         activeDice
+        selectedDice={-1}
         dices={dicesTestData}
         handleSelectedDice={jest.fn()}
         restMovements={0}
@@ -61,6 +63,7 @@ describe('Dices Container', () => {
     render(
       <DicesContainer
         activeDice={false}
+        selectedDice={-1}
         dices={dicesTestData}
         handleSelectedDice={jest.fn()}
         restMovements={2}

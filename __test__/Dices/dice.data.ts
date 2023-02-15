@@ -1,15 +1,17 @@
-import { DiceData } from '@/hooks/usePairDices'
+import { DiceData, DiceDataWithId } from '@/hooks/usePairDices'
 
-const dice_1: DiceData = {
+const dice_1: DiceDataWithId = {
   diceColor: 'orange',
+  id: 1,
   diceNumber: 3,
   handleDiceColor: jest.fn(),
   handleDiceNumber: jest.fn(),
   rollDice: jest.fn()
 }
 
-const dice_2: DiceData = {
+const dice_2: DiceDataWithId = {
   diceColor: 'green',
+  id: 2,
   diceNumber: 5,
   handleDiceColor: jest.fn(),
   handleDiceNumber: jest.fn(),
