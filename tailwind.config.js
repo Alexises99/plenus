@@ -8,8 +8,17 @@ module.exports = {
       },
       gridTemplateRows: {
         7: 'repeat(7, minmax(0, 1fr))'
+      },
+      animation: {
+        border: 'border 4s ease infinite'
+      },
+      keyframes: {
+        border: {
+          '0%, 100%': { backgroundPosition: '0% 50%' },
+          '50%': { backgroundPosition: '100% 50%' }
+        }
       }
     }
   },
   plugins: []
-};
+}

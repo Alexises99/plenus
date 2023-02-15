@@ -1,10 +1,9 @@
 import { getRandomNumber } from '@/utils/random'
-import { useEffect, useState } from 'react'
-import { DiceData, usePairDices } from './usePairDices'
-
-const rand = getRandomNumber()
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { DiceDataWithId, usePairDices } from './usePairDices'
 
 export function useDices() {
+  const rand = useMemo(() => getRandomNumber(), [])
   const dice_1 = usePairDices(rand)
   const dice_2 = usePairDices(rand)
   const dice_3 = usePairDices(rand)
@@ -15,7 +14,7 @@ export function useDices() {
     { ...dice_3, id: 3 }
   ]
 
-  const [selectedDice, setSelectedDice] = useState<DiceData | null>(null)
+  const [selectedDice, setSelectedDice] = useState<DiceDataWithId | null>(null)
   const [restMovements, setRestMovements] = useState<number>(
     selectedDice ? selectedDice.diceNumber : -1
   )
@@ -25,10 +24,12 @@ export function useDices() {
 
   const rollDices = () => dices.forEach((dice) => dice.rollDice())
 
-  const handleRestMovements = (restMovements: number) =>
-    setRestMovements(restMovements)
+  const handleRestMovements = useCallback(
+    (restMovements: number) => setRestMovements(restMovements),
+    []
+  )
 
-  const handleSelectedDice = (dice: DiceData) => {
+  const handleSelectedDice = (dice: DiceDataWithId) => {
     if (restMovements <= 0) {
       setSelectedDice(dice)
     }
@@ -42,7 +43,7 @@ export function useDices() {
     if (selectedDice) {
       handleRestMovements(selectedDice.diceNumber)
     }
-  }, [selectedDice])
+  }, [selectedDice, handleRestMovements])
 
   return {
     dices,

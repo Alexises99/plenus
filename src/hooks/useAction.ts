@@ -2,7 +2,7 @@ import { GameSquare } from '@/dtos/square'
 import { SquareColor } from '@/types'
 import { checkDice } from '@/utils/dice'
 import { highlightGameBoard } from '@/utils/gameLogic'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DiceData } from './usePairDices'
 
 interface useActionParams {
@@ -12,8 +12,6 @@ interface useActionParams {
   restMovements: number
   handleRestMovements: (restMovements: number) => void
 }
-
-let lastSquareVisited: GameSquare | null = null
 
 export function useAction({
   initialGameBoard,
@@ -29,13 +27,6 @@ export function useAction({
     dice && checkGame(dice)
   }, [dice])
 
-  const checkGame = (dice: DiceData) => {
-    if (!checkDice(restMovements)) {
-      return
-    }
-    highLightGame(dice)
-  }
-
   const highLightGame = ({ diceColor, diceNumber }: DiceData) => {
     const highlightedGameBoard = highlightGameBoard(
       null,
@@ -46,7 +37,6 @@ export function useAction({
       firstTurn.current,
       diceNumber
     )
-    lastSquareVisited = null
 
     if (!highlightedGameBoard.some((square) => square.border)) {
       handleRestMovements(0)
@@ -54,12 +44,18 @@ export function useAction({
     setGameBoard(highlightedGameBoard)
   }
 
+  const checkGame = (dice: DiceData) => {
+    if (!checkDice(restMovements)) {
+      return
+    }
+    highLightGame(dice)
+  }
+
   const handleSquareReveal = (square: GameSquare) => {
     if (!square.border || restMovements < 1) return
     const prevRestMovements = restMovements
     handleRestMovements(prevRestMovements - 1)
     firstTurn.current = false
-    lastSquareVisited = square
 
     const copyGameBoard = gameBoard.map((squareItem) => ({
       ...squareItem,

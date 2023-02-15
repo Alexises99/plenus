@@ -29,6 +29,7 @@ export default function GameBoard({
     <>
       <DicesContainer
         activeDice={activeDice}
+        selectedDice={selectedDice?.id || -1}
         dices={dices}
         handleSelectedDice={handleSelectedDice}
         restMovements={restMovements}

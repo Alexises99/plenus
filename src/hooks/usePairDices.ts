@@ -22,7 +22,7 @@ export interface DiceDataWithId extends DiceData {
 export function usePairDices(rand: () => number): DiceData {
   const generateRandom = useCallback(
     () => randomIntFromInterval(rand(), 1, 5),
-    []
+    [rand]
   )
   const { diceValue: diceNumber, handleDice: handleDiceNumber } =
     useDice<number>(() => generateRandomNumbers(generateRandom).diceNumber)
